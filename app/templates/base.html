@@ -1,7 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - Musicapp{% else %}Welcome to Musicapp{% endif %}
+    {% if title %}{{ title }} - ProdLink{% else %}Welcome to ProdLink{% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -16,20 +16,7 @@
                 <a class="nav-link" href="/index">Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/artistlist">Artists</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/reset_db">Reset_DB</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Creation Forms
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/newartist">Create A New Artist</a>
-                  <a class="dropdown-item" href="/newvenue">Create A New Venue</a>
-                  <a class="dropdown-item" href="/newevent">Create A New Event</a>
-                </div>
+                <a class="nav-link" href="/artistlist">Posts</a>
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

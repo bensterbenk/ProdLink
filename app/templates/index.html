@@ -1,9 +1,20 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
-    <div style = "position:relative; left:20px; top:0px;">
-        <h1>Hello, Music Listener!</h1>
-        <br>
-        <p>Find the best artist, venues, and events here.</p>
-    </div>
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.post.label }}<br>
+            {{ form.post(cols=32, rows=4) }}<br>
+            {% for error in form.post.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% for post in posts %}
+    <p>
+    {{ post.author.username }} says: <b>{{ post.body }}</b>
+    </p>
+    {% endfor %}
 {% endblock %}

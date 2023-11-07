@@ -1,27 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, DateTimeField, SelectField, \
     DateField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from app.models import User, Artist, Venue
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+from app.models import User
 
 
-class ArtistForm(FlaskForm):
-    name = StringField('name', validators=[DataRequired()])
-    genre = StringField('genre', validators=[DataRequired()])
-    bio = TextAreaField('bio', validators=[DataRequired()])
+class PostForm(FlaskForm):
+    post = TextAreaField('Say something', validators=[
+    DataRequired(), Length(min=1, max=140)])
     submit = SubmitField('Submit')
 
-class VenueForm(FlaskForm):
-    name = StringField('name', validators=[DataRequired()])
-    address = StringField('address', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-class EventForm(FlaskForm):
-    name = StringField('name', validators=[DataRequired()])
-    time = DateField('time', format='%Y-%m-%d')
-    artists = SelectMultipleField('Artists', coerce=int, choices=[], validators=[DataRequired()], render_kw={"multiple": "true"})
-    venue = SelectField('venue',coerce=int, validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
