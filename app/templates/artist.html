@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style = "position:relative; left:20px; top:0px;">
+        <h1>{{ artist_info["name"] }}</h1>
+        <h2>{{ artist_info["genre"] }}</h2>
+        <p>{{ artist_info["bio"] }}</p>
+        {% for event in event_list %}
+            <a>{{ event }}</a>
+        {% endfor %}
+    </div>
+
+{% endblock %}
