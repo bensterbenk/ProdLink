@@ -8,4 +8,15 @@
             </td>
         </tr>
     </table>
+    <h3>User Posts</h3>
+    {% for post in user.posts %}
+    <h4><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h4>
+    <p>
+    {{ post.author.username }} says: <b>{{ post.body }}</b>
+        tags:
+        {% for tag in post.tags %}
+        {{ tag.name }}
+        {% endfor %}
+    </p>
+    {% endfor %}
 {% endblock %}

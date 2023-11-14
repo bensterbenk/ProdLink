@@ -88,9 +88,9 @@ def register():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
+    active_user = User.query.filter_by(username=username).first_or_404()
     form = EmptyForm()
-    return render_template('user.html', user=user, form=form)
+    return render_template('user.html', user=active_user, form=form)
 
 @app.route('/samplesforum')
 def samples_forum():
