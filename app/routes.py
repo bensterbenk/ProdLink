@@ -31,15 +31,26 @@ def reset_db():
     return render_template('index.html')
 
 def populate_db():
-    p1 = Tag(name='rnb')
-    p2 = Tag(name='pop')
-    p3 = Tag(name='hip-hop')
-    p4 = Tag(name='soul')
-    p5 = Tag(name='drum and bass')
+    t1 = Tag(name='rnb')
+    t2 = Tag(name='pop')
+    t3 = Tag(name='hip-hop')
+    t4 = Tag(name='soul')
+    t5 = Tag(name='drum and bass')
 
-    db.session.add_all([p1, p2, p3, p4, p5])
+    db.session.add_all([t1, t2, t3, t4, t5])
     db.session.commit()
 
+    u1 = User(username='prodwizard', email='prodwizard@wizard.com')
+    u1.set_password('wizardman1')
+    u2 = User(username='top_op2', email='hater@hating.com')
+    u2.set_password('midrick2')
+
+    db.session.add_all([u1, u2])
+    db.session.commit()
+    p1 = Post(body='Im the prodwizard!', user_id=u1.id, tags=[t1])
+    p2 = Post(body='Jersey beats are all mid now LMFAOAOAO!', user_id=u2.id, tags=[t2])
+    db.session.add_all([p1, p2])
+    db.session.commit()
     return render_template('index.html')
 @app.route('/logout')
 def logout():
