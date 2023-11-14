@@ -7,6 +7,11 @@ from app import db
 from flask_login import UserMixin
 from app import login
 
+tag_post_association = Table('tag_post', db.Model.metadata,
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -20,20 +25,21 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Tag(UserMixin, db.Model):
+class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
-    tagtype = db.Column(db.String(64), index=True, unique=True)
+    posts = db.relationship("Post", secondary=tag_post_association, back_populates="tags")
     def __repr__(self):
         return '<Tag {}>'.format(self.name)
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    tags = db.relationship("Tag", secondary=tag_post_association, back_populates="posts")
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-
 
 @login.user_loader
 def load_user(id):

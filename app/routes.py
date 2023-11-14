@@ -6,7 +6,7 @@ from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm
 from app import app, models
 from app import db
 from flask_login import current_user, login_user, login_required
-from app.models import User, Post
+from app.models import User, Post, Tag
 from flask_login import logout_user
 
 
@@ -14,19 +14,8 @@ from flask_login import logout_user
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash('Your post is now live!')
-        return redirect(url_for('index'))
     posts = Post.query.all()
-    return render_template("index.html", title='Home Page', form=form,
-                           posts=posts)
-
-
-
+    return render_template("index.html", title='Home Page', posts=posts)
 
 @app.route('/reset_db')
 def reset_db():
@@ -42,6 +31,15 @@ def reset_db():
     return render_template('index.html')
 
 def populate_db():
+    p1 = Tag(name='rnb')
+    p2 = Tag(name='pop')
+    p3 = Tag(name='hip-hop')
+    p4 = Tag(name='soul')
+    p5 = Tag(name='drum and bass')
+
+    db.session.add_all([p1, p2, p3, p4, p5])
+    db.session.commit()
+
     return render_template('index.html')
 @app.route('/logout')
 def logout():
@@ -83,4 +81,33 @@ def user(username):
     form = EmptyForm()
     return render_template('user.html', user=user, form=form)
 
+@app.route('/samplesforum')
+def samples_forum():
+    return render_template('samplesforum.html')
+@app.route('/post/<post_id>')
+def post_display(post_id):
+    return render_template('post.html')
+@app.route('/newpost', methods=['GET','POST'])
+def newpost():
+    form = PostForm()
+    form.tags.choices = [(a.id, a.name) for a in Tag.query.all()]
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, user_id=current_user.id)
+        tag_ids = form.tags.data
+
+        if not isinstance(tag_ids, (list, tuple)):
+            artist_ids = [tag_ids]
+        all_tags = Tag.query.all()
+        for tag in all_tags:
+            for id in tag_ids:
+                if id == tag.id:
+                    post.tags.append(tag)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect('/')
+    return render_template('newpost.html', form=form)
+@app.route('/about')
+def post():
+    return render_template('about.html')
 
