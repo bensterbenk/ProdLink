@@ -14,8 +14,8 @@ from flask_login import logout_user
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = Post.query.all()
-    return render_template("index.html", title='Home Page', posts=posts)
+
+    return render_template("index.html", title='Home Page')
 
 @app.route('/reset_db')
 def reset_db():
@@ -47,8 +47,8 @@ def populate_db():
 
     db.session.add_all([u1, u2])
     db.session.commit()
-    p1 = Post(body='Im the prodwizard!', user_id=u1.id, tags=[t1])
-    p2 = Post(body='Jersey beats are all mid now LMFAOAOAO!', user_id=u2.id, tags=[t2])
+    p1 = Post(title="Intro to Prodwizard", body='Im the prodwizard! boooo', user_id=u1.id, tags=[t1])
+    p2 = Post(title="Only good takes", body='drill is all mid now LMFAOAOAO W lil mabu', user_id=u2.id, tags=[t2])
     db.session.add_all([p1, p2])
     db.session.commit()
     return render_template('index.html')
@@ -95,19 +95,40 @@ def user(username):
 @app.route('/samplesforum')
 def samples_forum():
     return render_template('samplesforum.html')
-@app.route('/post/<post_id>')
-def post_display(post_id):
-    return render_template('post.html')
+@app.route('/post/<post_id>', methods=['GET', 'POST'])
+def post(post_id):
+    tag_list = []
+    target_post = Post.query.filter_by(id=post_id).first()
+    target_user = User.query.filter_by(id=target_post.user_id).first()
+    if not target_post:
+        return "Post not found", 404
+
+    post_info = {
+        'id': target_post.id,
+        "title": target_post.title,
+        "body": target_post.body,
+        "author": target_user.username,
+        "timestamp": target_post.timestamp
+    }
+
+    for tag in target_post.tags:
+        tag_list.append(tag.name)
+
+    return render_template('post.html', post_info=post_info, tag_list=tag_list)
+@app.route('/posts')
+def posts():
+    posts = Post.query.all()
+    return render_template('posts.html', posts=posts)
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
     form = PostForm()
     form.tags.choices = [(a.id, a.name) for a in Tag.query.all()]
     if form.validate_on_submit():
-        post = Post(body=form.post.data, user_id=current_user.id)
+        post = Post(title = form.title.data, body=form.post.data, user_id=current_user.id)
         tag_ids = form.tags.data
 
         if not isinstance(tag_ids, (list, tuple)):
-            artist_ids = [tag_ids]
+            tag_ids = [tag_ids]
         all_tags = Tag.query.all()
         for tag in all_tags:
             for id in tag_ids:
@@ -119,6 +140,6 @@ def newpost():
         return redirect('/')
     return render_template('newpost.html', form=form)
 @app.route('/about')
-def post():
+def about():
     return render_template('about.html')
 

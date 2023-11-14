@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Post</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+    <div style = "position:relative; left:20px; top:0px;">
+        <h1>{{ post_info["title"] }}</h1>
+        <p>Posted by: {{ post_info["author"] }} on {{ post_info["timestamp"] }}</p>
+        <body>{{ post_info["body"] }}</body>
+        <p>Tags:</p>
+        {% for tag in tag_list %}
+            <p>{{ tag }}</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -6,6 +6,8 @@ from app.models import User
 
 
 class PostForm(FlaskForm):
+    title = TextAreaField('Title:', validators=[
+        DataRequired(), Length(min=1, max=140)])
     post = TextAreaField('Say something', validators=[
     DataRequired(), Length(min=1, max=140)])
     tags = SelectMultipleField('tags', coerce=int, choices=[], validators=[DataRequired()],
