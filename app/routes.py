@@ -2,7 +2,7 @@ import datetime
 from datetime import datetime
 from datetime import date
 from flask import Blueprint, render_template, flash, redirect, request, url_for
-from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm
+from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, EditProfileForm
 from app import app, models
 from app import db
 from flask_login import current_user, login_user, login_required
@@ -158,17 +158,6 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
 
-@app.route('/user/<username>')
-@login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
-    form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts, form=form)
-
 
 @app.route('/follow/<username>', methods=['POST'])
 @login_required
@@ -214,7 +203,7 @@ def collaboration(username):
     return "Not implemented yet"
 
 
-@app.route('list_samples', methods=['GET', 'POST'])
+@app.route('/list_samples', methods=['GET', 'POST'])
 def list_samples(username):
     return "not implemented yet"
 
