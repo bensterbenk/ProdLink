@@ -2,7 +2,7 @@ import datetime
 from datetime import datetime
 from datetime import date
 from flask import Blueprint, render_template, flash, redirect, request, url_for
-from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm
+from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm
 from app import app, models
 from app import db
 from flask_login import current_user, login_user, login_required
@@ -102,9 +102,31 @@ def user(username):
     form = EmptyForm()
     return render_template('user.html', user=active_user, form=form)
 
-@app.route('/samplesforum')
+@app.route('/samplesforum', methods=['GET','POST'])
 def samples_forum():
-    return render_template('samplesforum.html')
+    form = SearchForm()
+    form.genretags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='genre')]
+    form.instrtags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='instr')]
+    form.moodtags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='mood')]
+    posts_display = Post.query.all()
+    if form.validate_on_submit():
+        posts_display = []
+        search_text = form.title.data
+        tag_ids = form.genretags.data + form.moodtags.data + form.instrtags.data
+        if not isinstance(tag_ids, (list, tuple)):
+            tag_ids = [tag_ids]
+        all_posts = Post.query.all()
+        for post in all_posts:
+            this_user = User.query.filter_by(id=post.user_id)
+            this_user = this_user[0]
+            if search_text in post.title or search_text in post.body or search_text in this_user.username:
+                posts_display.append(post)
+            for tag in tag_ids:
+                if tag in post.tags:
+                    posts_display.append()
+
+
+    return render_template('samplesforum.html', form=form, posts=posts_display)
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post(post_id):
     tag_list = []

@@ -18,6 +18,13 @@ class PostForm(FlaskForm):
                                     render_kw={"multiple": "true"})
     submit = SubmitField('Submit')
 
+class SearchForm(FlaskForm):
+    title = TextAreaField('Search')
+    genretags = SelectMultipleField('genretags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    submit = SubmitField('Submit')
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
