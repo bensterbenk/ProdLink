@@ -10,8 +10,12 @@ class PostForm(FlaskForm):
         DataRequired(), Length(min=1, max=140)])
     post = TextAreaField('Say something', validators=[
     DataRequired(), Length(min=1, max=140)])
-    tags = SelectMultipleField('tags', coerce=int, choices=[], validators=[DataRequired()],
+    genretags = SelectMultipleField('genretags', coerce=int, choices=[], validators=[DataRequired()],
                                   render_kw={"multiple": "true"})
+    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], validators=[DataRequired()],
+                                    render_kw={"multiple": "true"})
+    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], validators=[DataRequired()],
+                                    render_kw={"multiple": "true"})
     submit = SubmitField('Submit')
 
 

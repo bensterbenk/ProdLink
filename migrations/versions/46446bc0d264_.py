@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fe7a61e0984d
+Revision ID: 46446bc0d264
 Revises: 
-Create Date: 2023-11-14 11:54:13.291369
+Create Date: 2023-11-15 21:55:32.114390
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fe7a61e0984d'
+revision = '46446bc0d264'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,10 +21,12 @@ def upgrade():
     op.create_table('tag',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=True),
+    sa.Column('tagtype', sa.String(length=64), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('tag', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_tag_name'), ['name'], unique=True)
+        batch_op.create_index(batch_op.f('ix_tag_tagtype'), ['tagtype'], unique=True)
 
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -71,6 +73,7 @@ def downgrade():
 
     op.drop_table('user')
     with op.batch_alter_table('tag', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_tag_tagtype'))
         batch_op.drop_index(batch_op.f('ix_tag_name'))
 
     op.drop_table('tag')

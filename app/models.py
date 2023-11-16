@@ -29,6 +29,7 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
     posts = db.relationship("Post", secondary=tag_post_association, back_populates="tags")
+    tag_type = db.Column(db.String(64), index=True)
     def __repr__(self):
         return '<Tag {}>'.format(self.name)
 

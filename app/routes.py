@@ -31,13 +31,23 @@ def reset_db():
     return render_template('index.html')
 
 def populate_db():
-    t1 = Tag(name='rnb')
-    t2 = Tag(name='pop')
-    t3 = Tag(name='hip-hop')
-    t4 = Tag(name='soul')
-    t5 = Tag(name='drum and bass')
+    t1 = Tag(name='rnb', tag_type="genre")
+    t2 = Tag(name='pop', tag_type="genre")
+    t3 = Tag(name='hip-hop', tag_type="genre")
+    t4 = Tag(name='soul', tag_type="genre")
+    t5 = Tag(name='drum and bass', tag_type="genre")
+    t6 = Tag(name='guitar', tag_type="instr")
+    t7 = Tag(name='piano', tag_type="instr")
+    t8 = Tag(name='vocals', tag_type="instr")
+    t9 = Tag(name='bass', tag_type="instr")
+    t10 = Tag(name='drums', tag_type="instr")
+    t11 = Tag(name='sad', tag_type="mood")
+    t12 = Tag(name='happy', tag_type="mood")
+    t13 = Tag(name='hype', tag_type="mood")
+    t14 = Tag(name='mellow', tag_type="mood")
+    t15 = Tag(name='soulful', tag_type="mood")
 
-    db.session.add_all([t1, t2, t3, t4, t5])
+    db.session.add_all([t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15])
     db.session.commit()
 
     u1 = User(username='prodwizard', email='prodwizard@wizard.com')
@@ -47,8 +57,8 @@ def populate_db():
 
     db.session.add_all([u1, u2])
     db.session.commit()
-    p1 = Post(title="Intro to Prodwizard", body='Im the prodwizard! boooo', user_id=u1.id, tags=[t1])
-    p2 = Post(title="Only good takes", body='drill is all mid now LMFAOAOAO W lil mabu', user_id=u2.id, tags=[t2])
+    p1 = Post(title="Intro to Prodwizard", body='Im the prodwizard! boooo', user_id=u1.id, tags=[t1, t6, t11])
+    p2 = Post(title="Only good takes", body='drill is all mid now LMFAOAOAO W lil mabu', user_id=u2.id, tags=[t2, t7, t12])
     db.session.add_all([p1, p2])
     db.session.commit()
     return render_template('index.html')
@@ -122,11 +132,12 @@ def posts():
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
     form = PostForm()
-    form.tags.choices = [(a.id, a.name) for a in Tag.query.all()]
+    form.genretags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='genre')]
+    form.instrtags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='instr')]
+    form.moodtags.choices = [(a.id, a.name) for a in Tag.query.filter_by(tag_type='mood')]
     if form.validate_on_submit():
         post = Post(title = form.title.data, body=form.post.data, user_id=current_user.id)
-        tag_ids = form.tags.data
-
+        tag_ids = form.genretags.data + form.moodtags.data + form.instrtags.data
         if not isinstance(tag_ids, (list, tuple)):
             tag_ids = [tag_ids]
         all_tags = Tag.query.all()
