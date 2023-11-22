@@ -2,6 +2,7 @@ import datetime
 from datetime import datetime
 from datetime import date
 from flask import Blueprint, render_template, flash, redirect, request, url_for
+from sqlalchemy import or_
 from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm
 from app import app, models
 from app import db
@@ -111,21 +112,21 @@ def samples_forum():
     posts_display = Post.query.all()
     if form.validate_on_submit():
         posts_display = []
-        search_text = form.title.data
+        search_text = form.title.data.lower()
         tag_ids = form.genretags.data + form.moodtags.data + form.instrtags.data
         if not isinstance(tag_ids, (list, tuple)):
             tag_ids = [tag_ids]
-        all_posts = Post.query.all()
-        for post in all_posts:
-            this_user = User.query.filter_by(id=post.user_id)
-            this_user = this_user[0]
-            if search_text in post.title or search_text in post.body or search_text in this_user.username:
-                posts_display.append(post)
-            for tag in tag_ids:
-                if tag in post.tags:
-                    posts_display.append()
+        if tag_ids:
+            tagged_posts = Post.query.filter(Post.tags.any(Tag.id.in_(tag_ids))).all()
+            posts_display.extend(tagged_posts)
 
+        if search_text:
+            text_search_posts = Post.query.filter(
+                or_(Post.title.ilike(f'%{search_text}%'), Post.body.ilike(f'%{search_text}%'))).all()
+            posts_display.extend(text_search_posts)
 
+    # Remove duplicate posts in case a post matches both tag and text criteria
+    posts_display = list(set(posts_display))
     return render_template('samplesforum.html', form=form, posts=posts_display)
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post(post_id):
