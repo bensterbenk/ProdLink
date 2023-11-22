@@ -3,11 +3,11 @@ from datetime import datetime
 from datetime import date
 from flask import Blueprint, render_template, flash, redirect, request, url_for
 from sqlalchemy import or_
-from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm
+from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm, CommentForm
 from app import app, models
 from app import db
 from flask_login import current_user, login_user, login_required
-from app.models import User, Post, Tag
+from app.models import User, Post, Tag, Comment
 from flask_login import logout_user
 
 
@@ -130,11 +130,18 @@ def samples_forum():
     return render_template('samplesforum.html', form=form, posts=posts_display)
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post(post_id):
+    form = CommentForm()
     tag_list = []
+    comment_list = []
     target_post = Post.query.filter_by(id=post_id).first()
     target_user = User.query.filter_by(id=target_post.user_id).first()
     if not target_post:
         return "Post not found", 404
+    if form.validate_on_submit():
+        new_comment = Comment(body=form.body.data, user_id=current_user.id)
+        db.session.add(new_comment)
+        db.session.commit()
+        target_post.comments.append(new_comment)
 
     post_info = {
         'id': target_post.id,
@@ -143,11 +150,14 @@ def post(post_id):
         "author": target_user.username,
         "timestamp": target_post.timestamp
     }
-
     for tag in target_post.tags:
         tag_list.append(tag.name)
+    for comment in target_post.comments:
+        comment_info = {"body": comment.body, "author": (User.query.filter_by(id=comment.user_id).first()).username}
+        comment_list.append(comment_info)
 
-    return render_template('post.html', post_info=post_info, tag_list=tag_list)
+
+    return render_template('post.html', post_info=post_info, tag_list=tag_list, comment_list=comment_list, form=form)
 @app.route('/posts')
 def posts():
     posts = Post.query.all()

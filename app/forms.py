@@ -17,6 +17,9 @@ class PostForm(FlaskForm):
     moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], validators=[DataRequired()],
                                     render_kw={"multiple": "true"})
     submit = SubmitField('Submit')
+class CommentForm(FlaskForm):
+    body = TextAreaField('Leave a comment', validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
 
 class SearchForm(FlaskForm):
     title = TextAreaField('Search')

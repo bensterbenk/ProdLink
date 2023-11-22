@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
     <div style = "position:relative; left:20px; top:0px;">
         <h1>{{ post_info["title"] }}</h1>
@@ -8,6 +8,12 @@
         <p>Tags:</p>
         {% for tag in tag_list %}
             <p>{{ tag }}</p>
+        {% endfor %}
+        {{ wtf.quick_form(form) }}
+        <h2>Replies:</h2>
+        {% for comment in comment_list %}
+            <h4>Posted By: {{ comment["author"] }}</h4>
+            <p>{{ comment["body"] }}</p>
         {% endfor %}
     </div>
 
