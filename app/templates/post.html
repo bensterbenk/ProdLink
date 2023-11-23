@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
-    <div style = "position:relative; left:20px; top:0px;">
+    <div style="position:relative; left:20px; top:0px;">
         <h1>{{ post_info["title"] }}</h1>
         <p>Posted by: {{ post_info["author"] }} on {{ post_info["timestamp"] }}</p>
         <body>{{ post_info["body"] }}</body>
@@ -9,12 +9,17 @@
         {% for tag in tag_list %}
             <p>{{ tag }}</p>
         {% endfor %}
+
+        <audio controls>
+            <source src="{{ url_for('serve_audio', filename=post_info['audio_file']) }}" type="audio/mpeg">
+        </audio>
+
         {{ wtf.quick_form(form) }}
+
         <h2>Replies:</h2>
         {% for comment in comment_list %}
             <h4>Posted By: {{ comment["author"] }}</h4>
             <p>{{ comment["body"] }}</p>
         {% endfor %}
     </div>
-
 {% endblock %}

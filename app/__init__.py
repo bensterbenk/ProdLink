@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 import logging
 from logging.handlers import SMTPHandler
-app = Flask(__name__)
+app = Flask(__name__, static_folder=Config.STATIC_FOLDER, static_url_path='/static')
 login = LoginManager(app)
 app.config.from_object(Config)
 db = SQLAlchemy(app)

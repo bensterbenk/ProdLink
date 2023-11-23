@@ -1,7 +1,10 @@
 import datetime
+import os
+import shutil
 from datetime import datetime
 from datetime import date
-from flask import Blueprint, render_template, flash, redirect, request, url_for
+from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app, Response, \
+    send_from_directory
 from sqlalchemy import or_
 from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm, CommentForm
 from app import app, models
@@ -58,8 +61,9 @@ def populate_db():
 
     db.session.add_all([u1, u2])
     db.session.commit()
-    p1 = Post(title="Intro to Prodwizard", body='Im the prodwizard! boooo', user_id=u1.id, tags=[t1, t6, t11])
-    p2 = Post(title="Only good takes", body='drill is all mid now LMFAOAOAO W lil mabu', user_id=u2.id, tags=[t2, t7, t12])
+    p1 = Post(title="Intro to Prodwizard", body='Im the prodwizard! boooo', user_id=u1.id, tags=[t1, t6, t11], audio_file='p1_audio.mp3')
+    p2 = Post(title="Only good takes", body='drill is all mid now LMFAOAOAO W lil mabu', user_id=u2.id, tags=[t2, t7, t12], audio_file='p2_audio.mp3')
+
     db.session.add_all([p1, p2])
     db.session.commit()
     return render_template('index.html')
@@ -148,7 +152,8 @@ def post(post_id):
         "title": target_post.title,
         "body": target_post.body,
         "author": target_user.username,
-        "timestamp": target_post.timestamp
+        "timestamp": target_post.timestamp,
+        "audio_file": target_post.audio_file
     }
     for tag in target_post.tags:
         tag_list.append(tag.name)
@@ -178,6 +183,10 @@ def newpost():
             for id in tag_ids:
                 if id == tag.id:
                     post.tags.append(tag)
+
+        # Save audio file
+        audio_file = form.audio_file.data
+        post.save_audio(audio_file)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
@@ -186,4 +195,6 @@ def newpost():
 @app.route('/about')
 def about():
     return render_template('about.html')
-
+@app.route('/static/audio/<filename>')
+def serve_audio(filename):
+    return send_from_directory(app.root_path, f'static/audio/{filename}')
