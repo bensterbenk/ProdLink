@@ -120,14 +120,26 @@ def samples_forum():
         tag_ids = form.genretags.data + form.moodtags.data + form.instrtags.data
         if not isinstance(tag_ids, (list, tuple)):
             tag_ids = [tag_ids]
-        if tag_ids:
-            tagged_posts = Post.query.filter(Post.tags.any(Tag.id.in_(tag_ids))).all()
-            posts_display.extend(tagged_posts)
 
-        if search_text:
+        if tag_ids and search_text:
+            tagged_posts = Post.query.filter(Post.tags.any(Tag.id.in_(tag_ids))).all()
             text_search_posts = Post.query.filter(
                 or_(Post.title.ilike(f'%{search_text}%'), Post.body.ilike(f'%{search_text}%'))).all()
-            posts_display.extend(text_search_posts)
+            tagged_post_ids = set(post.id for post in tagged_posts)
+            text_search_post_ids = set(post.id for post in text_search_posts)
+            common_post_ids = tagged_post_ids.intersection(text_search_post_ids)
+            common_posts = [post for post in tagged_posts if post.id in common_post_ids]
+            posts_display.extend(common_posts)
+        else:
+            if tag_ids:
+                tagged_posts = Post.query.filter(Post.tags.any(Tag.id.in_(tag_ids))).all()
+                posts_display.extend(tagged_posts)
+            else:
+                text_search_posts = Post.query.filter(
+                    or_(Post.title.ilike(f'%{search_text}%'), Post.body.ilike(f'%{search_text}%'))).all()
+                posts_display.extend(text_search_posts)
+
+
 
     # Remove duplicate posts in case a post matches both tag and text criteria
     posts_display = list(set(posts_display))
