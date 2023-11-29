@@ -3,15 +3,34 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextA
     DateField, SelectMultipleField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User
-
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+from werkzeug.utils import secure_filename
 
 class PostForm(FlaskForm):
     title = TextAreaField('Title:', validators=[
         DataRequired(), Length(min=1, max=140)])
     post = TextAreaField('Say something', validators=[
     DataRequired(), Length(min=1, max=140)])
-    tags = SelectMultipleField('tags', coerce=int, choices=[], validators=[DataRequired()],
+    genretags = SelectMultipleField('genretags', coerce=int, choices=[], validators=[DataRequired()],
                                   render_kw={"multiple": "true"})
+    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], validators=[DataRequired()],
+                                    render_kw={"multiple": "true"})
+    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], validators=[DataRequired()],
+                                    render_kw={"multiple": "true"})
+    audio_file = FileField('Audio File', validators=[
+        FileRequired(),
+        FileAllowed(['mp3'], 'Only MP3 files are allowed.')
+    ])
+    submit = SubmitField('Submit')
+class CommentForm(FlaskForm):
+    body = TextAreaField('Leave a comment', validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
+
+class SearchForm(FlaskForm):
+    title = TextAreaField('Search')
+    genretags = SelectMultipleField('genretags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], render_kw={"multiple": "true"})
     submit = SubmitField('Submit')
 
 
