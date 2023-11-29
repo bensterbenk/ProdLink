@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextA
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User
 
-
+# may need an edit Post class
 class PostForm(FlaskForm):
     title = TextAreaField('Title:', validators=[
         DataRequired(), Length(min=1, max=140)])
