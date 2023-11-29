@@ -6,6 +6,7 @@ from app.models import User
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from werkzeug.utils import secure_filename
 
+# may need an edit Post class
 class PostForm(FlaskForm):
     title = TextAreaField('Title:', validators=[
         DataRequired(), Length(min=1, max=140)])
