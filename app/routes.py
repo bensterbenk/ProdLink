@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 from datetime import date
 from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app, Response, \
-    send_from_directory
+    send_from_directory, jsonify
 from sqlalchemy import or_
 from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm, CommentForm, EditProfileForm
 from app import app, models
@@ -15,13 +15,11 @@ import fileinput
 from werkzeug.utils import secure_filename
 from flask_login import logout_user
 
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
-
-    return render_template("index.html", title='Home Page')
+    data = {'message': 'Fuck you From Ben! This data comes from a JSON response.'}
+    return jsonify(data)
 
 @app.route('/reset_db')
 def reset_db():
@@ -147,20 +145,29 @@ def samples_forum():
     # Remove duplicate posts in case a post matches both tag and text criteria
     posts_display = list(set(posts_display))
     return render_template('samplesforum.html', form=form, posts=posts_display)
-@app.route('/post/<post_id>', methods=['GET', 'POST'])
+@app.route('/api/posts/<post_id>', methods=['GET', 'POST'])
 def post(post_id):
+    """
+    comment stuff
     form = CommentForm()
+
+    if form.validate_on_submit():
+        new_comment = Comment(body=form.body.data, user_id=current_user.id)
+        db.session.add(new_comment)
+        db.session.commit()
+        target_post.comments.append(new_comment)
+    """
     tag_list = []
     comment_list = []
     target_post = Post.query.filter_by(id=post_id).first()
     target_user = User.query.filter_by(id=target_post.user_id).first()
     if not target_post:
         return "Post not found", 404
-    if form.validate_on_submit():
-        new_comment = Comment(body=form.body.data, user_id=current_user.id)
-        db.session.add(new_comment)
-        db.session.commit()
-        target_post.comments.append(new_comment)
+    for tag in target_post.tags:
+        tag_list.append(tag.id)
+    for comment in target_post.comments:
+        comment_info = {"body": comment.body, "author": (User.query.filter_by(id=comment.user_id).first()).username}
+        comment_list.append(comment_info)
 
     post_info = {
         'id': target_post.id,
@@ -168,20 +175,37 @@ def post(post_id):
         "body": target_post.body,
         "author": target_user.username,
         "timestamp": target_post.timestamp,
-        "audio_file": target_post.audio_file
+        "audio_file": target_post.audio_file,
+        "tags": tag_list,
+        "comments": comment_list
     }
-    for tag in target_post.tags:
-        tag_list.append(tag.name)
-    for comment in target_post.comments:
-        comment_info = {"body": comment.body, "author": (User.query.filter_by(id=comment.user_id).first()).username}
-        comment_list.append(comment_info)
-
-
-    return render_template('post.html', post_info=post_info, tag_list=tag_list, comment_list=comment_list, form=form)
-@app.route('/posts')
+    return post_info
+@app.route('/api/posts')
 def posts():
     posts = Post.query.all()
-    return render_template('posts.html', posts=posts)
+    posts_info = []
+    for post in posts:
+        target_user = User.query.filter_by(id=post.user_id).first()
+        tag_list = []
+        comment_list = []
+        for tag in post.tags:
+            tag_list.append(tag.id)
+        for comment in post.comments:
+            comment_info = {"body": comment.body, "author": (User.query.filter_by(id=comment.user_id).first()).username}
+            comment_list.append(comment_info)
+        post_info = {
+            'id': post.id,
+            "title": post.title,
+            "body": post.body,
+            "author_name": target_user.username,
+            "author_id": target_user.id,
+            "timestamp": post.timestamp,
+            "audio_file": post.audio_file,
+            "tags": tag_list,
+            "comments": comment_list
+        }
+        posts_info.append(post_info)
+    return jsonify(posts_info)
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
     form = PostForm()
@@ -334,11 +358,9 @@ def save_file(file):
     if file:
         # Ensure a secure filename to prevent potential security issues
         filename = secure_filename(file.filename)
-
         # Save the file to a location on your server
         file_path = f"uploads/{filename}"  # Modify the path as needed
         file.save(file_path)
-
         return file_path
 
     return None
@@ -353,3 +375,40 @@ def about():
 @app.route('/static/audio/<filename>')
 def serve_audio(filename):
     return send_from_directory(app.root_path, f'static/audio/{filename}')
+
+@app.route('/api/tags')
+def all_tags():
+    all_tags = Tag.query.all()
+    tags_info = []
+
+
+    for tag in all_tags:
+        tag_posts = tag.posts
+        tag_posts_ids = []
+        for post in tag_posts:
+            tag_posts_ids.append(post.id)
+        tag_info = {
+            'id': tag.id,
+            'name': tag.name,
+            'posts': tag_posts_ids,
+            'tag_type': tag.tag_type
+        }
+        tags_info.append(tag_info)
+    return tags_info
+
+@app.route('/api/tags/<tag_id>', methods=['GET', 'POST'])
+def tag(tag_id):
+    tag = Tag.query.filter_by(id=tag_id).first()
+
+    tag_posts = tag.posts
+    tag_posts_ids = []
+    for post in tag_posts:
+        tag_posts_ids.append(post.id)
+    tag_info = {
+        'id':tag.id,
+        'name': tag.name,
+        'posts': tag_posts_ids,
+        'tag_type': tag.tag_type
+    }
+    return tag_info
+
