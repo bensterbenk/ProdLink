@@ -173,7 +173,7 @@ def post(post_id):
         'id': target_post.id,
         "title": target_post.title,
         "body": target_post.body,
-        "author": target_user.username,
+        "author_name": target_user.username,
         "timestamp": target_post.timestamp,
         "audio_file": target_post.audio_file,
         "tags": tag_list,
@@ -412,3 +412,45 @@ def tag(tag_id):
     }
     return tag_info
 
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
+
+    # Extract registration data
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Check if username or email already exists
+    if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
+        return jsonify({'error': 'Username or email already exists'}), 400
+
+    # Create a new user
+    new_user = User(username=username, email=email)
+    new_user.set_password(password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'Registration successful'}), 201
+
+
+@app.route('/api/login', methods=['POST'])
+def login_user():
+    data = request.get_json()
+
+    # Extract login data
+    username = data.get('username')
+    password = data.get('password')
+
+    # Find the user in the database
+    user = User.query.filter_by(username=username).first()
+
+    # Check if the user exists and the password is correct
+    if user and user.check_password(password):
+        # Log in the user
+        login_user(user)
+
+        return jsonify({'message': 'Login successful'}), 200
+    else:
+        return jsonify({'error': 'Invalid username or password'}), 401
