@@ -1,25 +1,90 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
+
 {% block content %}
-    <div style="position:relative; left:20px; top:0px;">
-        <h1>{{ post_info["title"] }}</h1>
-        <p>Posted by: {{ post_info["author"] }} on {{ post_info["timestamp"] }}</p>
-        <body>{{ post_info["body"] }}</body>
-        <p>Tags:</p>
-        {% for tag in tag_list %}
-            <p>{{ tag }}</p>
-        {% endfor %}
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+            <div class="col-md-8 my-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ post_info["title"] }}</h1>
+                        <p class="card-subtitle text-muted">Posted by: {{ post_info["author"] }} on {{ post_info["timestamp"] }}</p>
+                        <hr>
 
-        <audio controls>
-            <source src="{{ url_for('serve_audio', filename=post_info['audio_file']) }}" type="audio/mpeg">
-        </audio>
+                        <div class="card-text">
+                            {{ post_info["body"] }}
+                        </div>
 
-        {{ wtf.quick_form(form) }}
+                        <hr>
 
-        <h2>Replies:</h2>
-        {% for comment in comment_list %}
-            <h4>Posted By: {{ comment["author"] }}</h4>
-            <p>{{ comment["body"] }}</p>
-        {% endfor %}
+                        <h4>Tags:</h4>
+                        <div class="mb-3">
+                            {% for tag in tag_list %}
+                                <span class="badge badge-primary mr-2">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+
+                        {% if post_info['audio_file'] %}
+                            <audio controls class="mb-3">
+                                <source src="{{ url_for('serve_audio', filename=post_info['audio_file']) }}" type="audio/mpeg">
+                            </audio>
+                        {% endif %}
+
+                        {{ wtf.quick_form(form, novalidate=true) }}
+
+                        <hr>
+
+                        <h2 class="mt-4">Replies:</h2>
+                        {% for comment in comment_list %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Posted by: {{ comment["author"] }}</h5>
+                                    <p class="card-text">{{ comment["body"] }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <style>
+        /* Add custom styles here */
+        .container-fluid, .row, .col-md-8 {
+            height: 100%;
+            width: 100%;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 100%;
+        }
+
+        .card-title {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .card-subtitle {
+            font-size: 1rem;
+        }
+
+        .card-text {
+            font-size: 1.2rem;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+        }
+
+        audio {
+            width: 100%;
+        }
+
+        /* Add more styles as needed */
+    </style>
 {% endblock %}
+
+

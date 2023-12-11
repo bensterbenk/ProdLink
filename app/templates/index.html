@@ -1,6 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Welcome to ProdLink</h1>
-    <h1>Hi, {{ current_user.username }}!</h1>
-    <img src="{{ url_for('static', filename='84e86e00964b23af974512a7d292ed40.jpg') }}" alt="Girl in a jacket" width="500" height="600">
+    <div class="container mt-5";>
+        <h1 class="display-3 text-center text-uppercase text-primary">Welcome to ProdLink</h1>
+        <h2 class="text-center text-info">Hi, {{ current_user.username }}!</h2>
+
+        <div class="row mt-5">
+            <div class="col-md-6 mb-4" style="background-color: lightgrey; background-size: cover; border-color: aqua";>
+                <a href="/posts" class="card border-primary text-decoration-none text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">View Posts</h5>
+                    </div>
+                </a>
+            </div>
+             <div class="col-md-6 mb-4" style="background-color: lightgrey; background-size: cover; border-color: aqua";>
+                <a href="/samplesforum" class="card border-primary text-decoration-none text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Samples & Beats</h5>
+                    </div>
+                </a>
+            </div>
+             <div class="col-md-6 mb-4" style="background-color: lightgrey; background-size: cover; border-color: aqua";>
+                <a href="/about" class="card border-primary text-decoration-none text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">About Us</h5>
+                    </div>
+                </a>
+            </div>
+             <div class="col-md-6 mb-4" style="background-color: lightgrey; background-size: cover; border-color: aqua";>
+                <a href="/collab" class="card border-primary text-decoration-none text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Collaborate With Others</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        </div>
+    </div>
 {% endblock %}
+
+
+

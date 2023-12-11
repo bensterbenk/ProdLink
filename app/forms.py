@@ -12,11 +12,11 @@ class PostForm(FlaskForm):
         DataRequired(), Length(min=1, max=140)])
     post = TextAreaField('Say something', validators=[
     DataRequired(), Length(min=1, max=140)])
-    genretags = SelectMultipleField('genretags', coerce=int, choices=[], validators=[DataRequired()],
+    genretags = SelectMultipleField('Genre Tags', coerce=int, choices=[], validators=[DataRequired()],
                                   render_kw={"multiple": "true"})
-    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], validators=[DataRequired()],
+    instrtags = SelectMultipleField('Instrument Tags', coerce=int, choices=[], validators=[DataRequired()],
                                     render_kw={"multiple": "true"})
-    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], validators=[DataRequired()],
+    moodtags = SelectMultipleField('Mood Tags', coerce=int, choices=[], validators=[DataRequired()],
                                     render_kw={"multiple": "true"})
     audio_file = FileField('Audio File', validators=[
         FileRequired(),
@@ -29,9 +29,9 @@ class CommentForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     title = TextAreaField('Search')
-    genretags = SelectMultipleField('genretags', coerce=int, choices=[], render_kw={"multiple": "true"})
-    instrtags = SelectMultipleField('instrtags', coerce=int, choices=[], render_kw={"multiple": "true"})
-    moodtags = SelectMultipleField('moodtags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    genretags = SelectMultipleField('Genre Tags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    instrtags = SelectMultipleField('Instrument Tags', coerce=int, choices=[], render_kw={"multiple": "true"})
+    moodtags = SelectMultipleField('Mood Tags', coerce=int, choices=[], render_kw={"multiple": "true"})
     submit = SubmitField('Submit')
 
 

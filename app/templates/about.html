@@ -1,5 +1,102 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <h1>This is the about page</h1>
-    <p>This will contain information about our website</p>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center text-uppercase text-primary mb-4">About Us</h1>
+
+                        <p class="lead text-center">
+                            Welcome to ProdLink, where innovation meets collaboration. Our mission is to create a platform that connects professionals from diverse fields, fostering an environment of knowledge sharing and inspiration.
+                        </p>
+
+                        <hr>
+
+                        <h2 class="card-subtitle text-center mb-4">Our Mission</h2>
+                        <p class="text-center">
+                            At ProdLink, we strive to provide a space for professionals to connect, collaborate, and unlock their full potential. Our mission is to empower individuals and teams by facilitating meaningful interactions and idea exchanges.
+                        </p>
+
+                        <hr>
+
+                        <h2 class="card-subtitle text-center mb-4">Meet the Team</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card text-center">
+                                    <img src="team-member-1.jpg" class="card-img-top" alt="Team Member 1">
+                                    <div class="card-body">
+                                        <h5 class="card-title">D'Andre Walker</h5>
+                                        <p class="card-text">Developer</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card text-center">
+                                    <img src="team-member-2.jpg" class="card-img-top" alt="Team Member 2">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Ben Sterbenk</h5>
+                                        <p class="card-text">Founder/Developer</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h2 class="card-subtitle text-center mb-4">Contact Us</h2>
+                        <p class="text-center">
+                            Have questions or suggestions? Feel free to reach out to us at <a href="mailto:bsterbenk@ithaca.edu">info@prodlink.com</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .container, .row, .col-md-8 {
+            height: 100%;
+            width: 90%;
+            display: flex;
+            justify-content: center;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .card-subtitle {
+            font-size: 1.8rem;
+            color: #007bff;
+        }
+
+        .lead {
+            font-size: 1.2rem;
+        }
+
+        .card-text, .card-body p {
+            font-size: 1.2rem;
+        }
+
+        .card-body {
+            text-align: justify;
+        }
+
+        img {
+            border-radius: 50%;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Add more styles as needed */
+    </style>
 {% endblock %}
+
+
