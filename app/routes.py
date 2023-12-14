@@ -8,7 +8,7 @@ from datetime import date
 from random import choice
 
 from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app, Response, \
-    send_from_directory
+    send_from_directory, jsonify
 from sqlalchemy import or_
 from .forms import LoginForm, RegistrationForm, EmptyForm, PostForm, SearchForm, CommentForm
 from app import app, models
@@ -25,13 +25,9 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-<<<<<<< Updated upstream
 
-    return render_template("index.html", title='Home Page')
-=======
     data = {'message': 'This data comes from a JSON response.'}
     return jsonify(data)
->>>>>>> Stashed changes
 
 @app.route('/reset_db')
 def reset_db():
@@ -216,19 +212,16 @@ def post(post_id):
     target_user = User.query.filter_by(id=target_post.user_id).first()
     if not target_post:
         return "Post not found", 404
-<<<<<<< Updated upstream
     if form.validate_on_submit():
         new_comment = Comment(body=form.body.data, user_id=current_user.id)
         db.session.add(new_comment)
         db.session.commit()
         target_post.comments.append(new_comment)
-=======
     for tag in target_post.tags:
         tag_list.append(tag.name)
     for comment in target_post.comments:
         comment_info = {"body": comment.body, "author": (User.query.filter_by(id=comment.user_id).first()).username}
         comment_list.append(comment_info)
->>>>>>> Stashed changes
 
     post_info = {
         'id': target_post.id,
@@ -249,9 +242,6 @@ def post(post_id):
 @app.route('/posts')
 def posts():
     posts = Post.query.all()
-<<<<<<< Updated upstream
-    return render_template('posts.html', posts=posts)
-=======
     posts_info = []
     for post in posts:
         target_user = User.query.filter_by(id=post.user_id).first()
@@ -275,7 +265,6 @@ def posts():
         }
         posts_info.append(post_info)
     return jsonify(posts_info)
->>>>>>> Stashed changes
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
     form = PostForm()
@@ -306,9 +295,7 @@ def about():
     return render_template('about.html')
 @app.route('/static/audio/<filename>')
 def serve_audio(filename):
-<<<<<<< Updated upstream
-    return send_from_directory(app.root_path, f'static/audio/{filename}')
-=======
+
     return send_from_directory(app.root_path, f'static/audio/{filename}')
 
 @app.route('/api/tags')
@@ -475,4 +462,3 @@ def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
->>>>>>> Stashed changes
